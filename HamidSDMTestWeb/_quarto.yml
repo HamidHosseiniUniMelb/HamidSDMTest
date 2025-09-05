@@ -9,6 +9,12 @@ website:
         text: Home
       - href: about.qmd
         text: Home
+      - href: [P4]logical.qmd
+        text: Home
+      - href: [P6]geometrical.qmd
+        text: Home
+      - href: [P8]network.qmd
+        text: Home
 
 format:
   html:
