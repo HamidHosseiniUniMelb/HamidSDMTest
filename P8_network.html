@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>HamidSDMTestWeb</title>
+<title>p8_network – HamidSDMTestWeb</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -68,6 +103,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -120,35 +184,416 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#p8-network-analysis" id="toc-p8-network-analysis" class="nav-link active" data-scroll-target="#p8-network-analysis">[P8] Network analysis</a>
+  <ul class="collapse">
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#introduction-to-networks-and-pgrouting" id="toc-introduction-to-networks-and-pgrouting" class="nav-link" data-scroll-target="#introduction-to-networks-and-pgrouting">1. Introduction to networks and pgRouting</a>
+  <ul class="collapse">
+  <li><a href="#pgrouting-documentation" id="toc-pgrouting-documentation" class="nav-link" data-scroll-target="#pgrouting-documentation">1.1. pgRouting documentation</a></li>
+  </ul></li>
+  <li><a href="#simple-network-analysis" id="toc-simple-network-analysis" class="nav-link" data-scroll-target="#simple-network-analysis">2. Simple network analysis</a>
+  <ul class="collapse">
+  <li><a href="#constructing-a-network" id="toc-constructing-a-network" class="nav-link" data-scroll-target="#constructing-a-network">2.1. Constructing a network</a></li>
+  <li><a href="#shortest-path-analysis" id="toc-shortest-path-analysis" class="nav-link" data-scroll-target="#shortest-path-analysis">2.2. Shortest path analysis</a></li>
+  <li><a href="#a-routing" id="toc-a-routing" class="nav-link" data-scroll-target="#a-routing">2.3. A* routing</a></li>
+  </ul></li>
+  <li><a href="#advanced-routing" id="toc-advanced-routing" class="nav-link" data-scroll-target="#advanced-routing">3. Advanced routing</a></li>
+  <li><a href="#working-with-real-networks" id="toc-working-with-real-networks" class="nav-link" data-scroll-target="#working-with-real-networks">4. Working with real networks</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">HamidSDMTestWeb</h1>
+
+
+
+<section id="p8-network-analysis" class="level1">
+<h1>[P8] Network analysis</h1>
+<section id="objectives" class="level3">
+<h3 class="anchored" data-anchor-id="objectives">Objectives</h3>
+<p>By the end of this practical you will:</p>
+<ul>
+<li>Understand how pgRouting handles network data for network analysis;</li>
+<li>Be able to create and retrieve information about objects based on their embedding in a network structure; and</li>
+<li>Perform specific network analysis tasks and queries.</li>
+</ul>
+</section>
+<section id="introduction-to-networks-and-pgrouting" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-networks-and-pgrouting">1. Introduction to networks and pgRouting</h2>
+<p>A network is a collection of objects <em>linked</em> into a structure. The connected (<em>topological</em>) structure of the network is typically represented by a set of <em>nodes</em>, as well as a set of <em>edges</em> (links) which represent connectivity between pairs of nodes. Edges in the network may be directed or undirected.</p>
+<p>A network may capture, for instance, the fabric of streets or railways connecting houses, suburbs and cities.</p>
+<p>To practice network analysis inside our PostgreSQL database, we will be using <strong>pgRouting</strong>. This PostgreSQL extension provides a collection of algorithms for solving network analysis problems, including traversal, routing and accessibility analysis.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A set of SQL queries of interest enabling to demonstrate how you build a network topology in PGRouting, a script is here: <a href="../resources/sql/sql06_network_analysis.sql">Network analysis</a>.</p>
+</div>
+</div>
+<section id="pgrouting-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="pgrouting-documentation">1.1. pgRouting documentation</h3>
+<p>The <a href="https://docs.pgrouting.org/">official documentation for pgRouting</a> lists all available functions and describes how they work. The material is very rough and sometimes difficult to understand, however, it should still give you a general idea of what to do.</p>
+<p>Make sure you are reading the documentation for the correct version, as pgRouting is under active development. To check the pgRouting version on Wammawatcha, run the following SQL query:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> pgr_version();</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="simple-network-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="simple-network-analysis">2. Simple network analysis</h2>
+<p>In this section, you will:</p>
+<ul>
+<li>learn how to store a network in a relational DB, and</li>
+<li>learn how to find shortest paths using pgRouting.</li>
+</ul>
+<section id="constructing-a-network" class="level3">
+<h3 class="anchored" data-anchor-id="constructing-a-network">2.1. Constructing a network</h3>
+<p>As discussed in this week’s lecture, one of the ways to store a network in a database is by forming an <strong>edge list</strong>.</p>
+<p>Each edge is written in terms of its two connected nodes. For example, an edge between node 9 and node 12 is written as <code>9,12</code>.</p>
+<p>The edge list can be implemented as a simple database table called an <strong>edge table</strong>. In this, each edge is given an <code>id</code>, and we store the <code>source</code> and <code>target</code> nodes of that edge:</p>
+<table class="w-auto caption-top table">
+<thead>
+<tr class="header">
+<th><code>edge_id</code></th>
+<th><code>source</code></th>
+<th><code>target</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>15</td>
+<td>9</td>
+<td>12</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>4</td>
+<td>9</td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>The edge table can contain any other required attributes as additional columns. For instance, in a road network, the edge table could include “name” and “speed limit” attributes.</p>
+<p>Optionally, we can also create a <strong>node table</strong> to store the <code>id</code> and location (<code>geom</code>) of each node, and any other attributes such as node name:</p>
+<table class="w-auto caption-top table">
+<thead>
+<tr class="header">
+<th><code>node_id</code></th>
+<th><code>geom</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>POINT (2 0)</code></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>POINT (2 1)</code></td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Although we are mixing pgRouting and PostGIS, be aware that these are totally independent, separate extensions. The geometry associated with the nodes <em>does not have to match at all</em> with the underlying network topology. For example, the Euclidean distance between nodes is not necessarily the same as the cost associated with the edge connecting those nodes (but it can be the result of the computation of such a distance).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Your Turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Create an edge table called <code>myedge</code> and a node table called <code>mynode</code>. Remember to set the primary key on each table!</li>
+<li>Fill your <code>myedge</code> and <code>mynode</code> tables with data corresponding to the network in the picture below. <strong>HINT:</strong> Refer back to <a href="./06_geometrical_queries.qmd#spatial-data-storage">Practical 6</a> if you need a reminder on how to insert spatial data into a table.</li>
+<li>Visualise your node table in QGIS.</li>
+<li>Visualise your edge table in QGIS. <strong>HINT:</strong> Use the QGIS DB Manager to write an SQL query that builds the edge geometries on-the-fly based on the node geometries. You will need to <em>join</em> your edge table to your node table - not once but twice. Look up an appropriate PostGIS function for constructing LineStrings from points.</li>
+</ol>
+<p><img src=".\figs/practicals/p07_network_analysis/network.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Answers">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>SQL solution for question 1:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> myedge (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  edge_id <span class="dt">integer</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">source</span> <span class="dt">integer</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  target <span class="dt">integer</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (edge_id)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> mynode (</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  node_id <span class="dt">integer</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  geom geometry(Point) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (node_id)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- Note, this network is not in any known SRS, so we do not specify an SRID for the `geom` column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>SQL solution for question 2:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> myedge <span class="kw">VALUES</span> (<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>);</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> myedge <span class="kw">VALUES</span> (<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>);</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> myedge <span class="kw">VALUES</span> (<span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>);</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- ... and so on, for all edges</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> mynode <span class="kw">VALUES</span> (<span class="dv">1</span>, <span class="st">'POINT (2 0)'</span>:<span class="ch">:geometry</span>);</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- alternatively:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> mynode <span class="kw">VALUES</span> (<span class="dv">1</span>, ST_Point(<span class="dv">2</span>, <span class="dv">0</span>));</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- ... and so on, for all nodes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>SQL solution for question 4:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_MakeLine(s.geom, t.geom)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> myedge</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">INNER</span> <span class="kw">JOIN</span> mynode <span class="kw">AS</span> s <span class="kw">ON</span> s.node_id <span class="op">=</span> <span class="kw">source</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">INNER</span> <span class="kw">JOIN</span> mynode <span class="kw">AS</span> t <span class="kw">ON</span> t.node_id <span class="op">=</span> target;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="shortest-path-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="shortest-path-analysis">2.2. Shortest path analysis</h3>
+<p>Dijkstra’s algorithm is the classic algorithm for finding the shortest path from one node to another. pgRouting includes the <code>pgr_dijkstra</code> function, allowing you to easily run this algorithm on your own network.</p>
+<p>pgRouting functions have an unusual syntax. You need to pass an SQL SELECT query as a text parameter. This embedded query must return a defined set of columns with specific names in a certain order.</p>
+<p>For example, the official documentation for <code>pgr_dijkstra</code> <a href="https://docs.pgrouting.org/latest/en/pgr_dijkstra.html#one-to-one">defines the “one-to-one” function signature</a> as follows:</p>
+<pre><code>pgr_dijkstra(Edges SQL, start vid, end vid, [directed])</code></pre>
+<p>The parameters themselves are defined <a href="https://docs.pgrouting.org/latest/en/pgr_dijkstra.html#parameters">under the heading “Parameters”</a>. The word <code>vid</code> stands for <code>vertex id</code> - this is what we have named <code>node_id</code>. The <code>directed</code> parameter is a boolean, <code>directed:=true</code> or <code>directed:=false</code>, dictating whether the network should be treated as a directed graph, where different forward and reverse costs apply depending on the direction in which the edge is traversededge.</p>
+<p>Further down the page, <a href="https://docs.pgrouting.org/latest/en/pgr_dijkstra.html#edges-sql">under the heading “Edges SQL”</a>, the required columns to be returned by the embedded SQL query are listed. They are <code>id</code>, <code>source</code>, <code>target</code>, <code>cost</code>, and the optional column <code>reverse_cost</code>.</p>
+<p>Thus, a basic template for calling <code>pgr_dijkstra</code> would be as follows:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> seq, node, edge, <span class="kw">cost</span>, agg_cost</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> pgr_dijkstra(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'SELECT ... AS id, ... AS source, ... AS target, ... AS cost [, ... AS reverse_cost]</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM edge_table'</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">start</span><span class="op">-</span>node<span class="op">-</span><span class="kw">id</span>, <span class="cf">end</span><span class="op">-</span>node<span class="op">-</span><span class="kw">id</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  directed<span class="op">:=</span><span class="kw">true</span> <span class="op">..</span>.<span class="kw">or</span><span class="op">..</span>. directed<span class="op">:=</span><span class="kw">false</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Your Turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use the query template above to find the shortest path from node 7 to node 10 in the network. Set the cost of every edge as 1.</p>
+</div>
+</div>
+<p>When you run the above query, you should get the following output:</p>
+<table class="w-auto caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">seq</th>
+<th style="text-align: center;">node</th>
+<th style="text-align: center;">edge</th>
+<th style="text-align: center;">cost</th>
+<th style="text-align: center;">agg_cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">3</td>
+</tr>
+</tbody>
+</table>
+<p>Look at the table and the network above. Can you work out what the answer to your query means?</p>
+<p>When working with spatial networks, the <em>cost</em> of an edge is normally related in some way to the length of that edge. Let’s construct the geometry of each edge in the network, and repeat the above problem using the length of each edge as its cost.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Your Turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Create a <em>view</em> of the edge table that includes a dynamically-generated edge geometry column. Use the following SQL code:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> myedge_with_geom <span class="kw">AS</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> myedge.<span class="op">*</span>, ST_MakeLine(s.geom, t.geom) <span class="kw">AS</span> geom</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> myedge</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">INNER</span> <span class="kw">JOIN</span> mynode <span class="kw">AS</span> s <span class="kw">ON</span> s.node_id <span class="op">=</span> <span class="kw">source</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">INNER</span> <span class="kw">JOIN</span> mynode <span class="kw">AS</span> t <span class="kw">ON</span> t.node_id <span class="op">=</span> target;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Inspect the contents of this view using <code>SELECT * FROM myedge_with_geom</code>.</p>
+<ol start="2" type="1">
+<li><p>Find the shortest path from node 7 to node 10, where the cost is the length (<code>ST_Length</code>) of each edge. Use the <code>myedge_with_geom</code> view.</p></li>
+<li><p>Rerun the query between several different pairs of nodes, including 7 and 9, 11 and 3, 4 and 12. Each time check the answer carefully to make sure it accords with what you expected. If it doesn’t, then investigate and rectify the problem.</p></li>
+<li><p>Now adapt your query to compute only the total cost of each shortest path. Then change it again to list only the path itself, in terms of the sequence of nodes followed.</p></li>
+<li><p>Run the shortest path query between nodes 13 and 10, and from 6 to 16. Is the answer what you expected? Understand what the correct answer should be and why you get that answer.</p></li>
+<li><p>Switch the cost of the edge from nodes 2 to 3 to -1. Now find the shortest route from nodes 1 to 3. What do you notice? What does cost -1 mean? <strong>HINT:</strong> To change the cost, use a <a href="https://www.w3schools.com/sql/sql_case.asp"><code>CASE</code> statement</a> for the <code>cost</code> component of the embedded SQL query.</p></li>
+<li><p>Now find the shortest route from 3 to 1, but with reverse edge costs enabled.</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="a-routing" class="level3">
+<h3 class="anchored" data-anchor-id="a-routing">2.3. A* routing</h3>
+<p>Although Dijkstra’s algorithm does not require any knowledge of the geometry of the network, the A* algorithm does. (Why? Read the documentation, and think about this.)</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Your Turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Run the following A* query using the following query template:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> seq, node, edge, <span class="kw">cost</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> pgr_astar(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'SELECT id, source, target, ... AS cost, ... AS x1, ... AS x2, ... AS y1, ... AS y2</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM edge_table'</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>, <span class="dv">5</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that even though the geometry of the edge end nodes is required for A*, this is not structured as a geometry data type. Work out how to add geometry to the edges using the <code>geom</code> column.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="advanced-routing" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-routing">3. Advanced routing</h2>
+<p>Try the following challenges:</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Your Turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Compute the shortest paths from node 3 to both nodes 1 and 10 in one step using a single pass of the <code>pgr_dijkstra</code> function.</li>
+<li>Compute using an all-pairs shortest path algorithm (e.g., <code>pgr_floydWarshall</code>) the costs for paths between every pair of nodes in the network. (And check this carefully. What do you notice?)</li>
+<li>Use the <span class="math inline">\(k\)</span>-shortest paths algorithm to compute the three shortest paths between nodes 11 and 1. <strong>HINT:</strong> Look for an appropriate function in the PostGIS documentation.</li>
+<li>Now work out how to display the shortest path generated by one of your queries in QGIS. The following query suggestion may assist: <img src="../figs/2_part/23_network_analysis/qgis_visualise_path.png" class="img-fluid"></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="working-with-real-networks" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-real-networks">4. Working with real networks</h2>
+<p>There is a small portion of a real road network, the network around the University of Melbourne, included in the <code>spatial</code> schema, tables <code>spatial.carlton_edges</code> and <code>spatial.carlton_nodes</code>. You can apply the skills you now have to routing in this real road network.</p>
+<p>Have a look at the structure of these tables, and load the data into QGIS to view it. Selecting a suitable origin and destination node, and adapt the routing examples you’ve already encountered to find the shortest path between those two locations. Note that the routing itself may be a little slower as networks become larger. Use the techniques you developed above to display the shortest path in QGIS.</p>
+<p><strong>Note</strong> on <code>pgr_createTopology</code>: You may notice in some documentation there is a function <code>pgr_createTopology</code> that is often used on a raw network to find intersections between edges and build the network topology from those intersections. You can experiment with it to create a topology of any network you import. It creates the edge table for you. See the scripts attached to this practical, above.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+pgr_createTopology
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“pgr_createTopology” is a pgRouting function that prepares a network dataset for routing by building a topology (nodes and edges) from a set of geometries (linear features like roads, railways, etc.). The signature of the function is as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pgr_createTopology(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    edge_table text,    <span class="co">--Name of the table containing linear data (e.g., us_interstates)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    tolerance float8,   <span class="co">--Snapping tolerance </span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    the_geom text,        <span class="co">--Name of the geometry column in the linear data (e.g., geom)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> text,                  <span class="co">--Unique identifier column for edges</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">source</span> text <span class="kw">DEFAULT</span> <span class="st">'source'</span>,   <span class="co">--The new column that will hold start node IDs</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    target text <span class="kw">DEFAULT</span> <span class="st">'target'</span>,   <span class="co">--The new columns that will hold end nodes IDs</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    clean <span class="dt">boolean</span> <span class="kw">DEFAULT</span> <span class="kw">false</span>       <span class="co">--If true, deletes old source/target values</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To create a topology for a linear feature (e.g., us_interstates), you first need to add the source, target, and edge_id columns, and then execute the topology creation function as follows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Create a copy of the linear feature in my schema</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> userName.us_interstates <span class="kw">as</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> spatial.us_interstates)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- Add 'source' and 'target' columns; integer type</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> userName.us_interstates <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="st">'source'</span> <span class="dt">integer</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> userName.us_interstates <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="st">'target'</span> <span class="dt">integer</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- Add 'edge_id' column; integer type and unique constraint</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> userName.us_interstates <span class="kw">ADD</span> <span class="kw">COLUMN</span> edge_id serial <span class="kw">unique</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Run topology function</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> pgr_createTopology(<span class="st">'userName.us_interstates'</span>, <span class="fl">0.00001</span>, <span class="st">'geom'</span>, <span class="st">'edge_id'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When pgr_createTopology is executed (with OK result), the source and target columns of the edge table are automatically populated with node IDs, and a corresponding vertices table named userName.tableName_vertices_pgr is generated. This vertices table stores the unique nodes of the network and serves as a reference for graph traversal. Once the topology is established, the full suite of pgRouting functions (e.g., pgr_dijkstra for shortest path analysis) can be applied to perform network analysis.</p>
+<p><strong>Notes:</strong> - The <code>source</code> and <code>target</code> columns must be of an <code>integer</code> data type, as they represent the IDs of the nodes in the network graph. - The values of the <code>source</code> and <code>target</code> columns are automatically populated during topology creation by pgr_createTopology. - The <code>edge_id</code> column must be of an <code>integer</code> data type (e.g., INTEGER, SERIAL), and have a <code>UNIQUE constraint</code>, as it serves as the unique identifier of the edges, preventing duplicate records. - Unlike <code>source</code> and <code>target</code>, the values of the <code>edge_id</code> column are not generated automatically during topology creation and must exist beforehand. Therefore, defining it as a <code>SERIAL</code> (auto-incrementing integer) is strongly recommended. - Snapping tolerance is the distance threshold used when creating a topology to decide whether two vertices (line endpoints) should be treated as the same node.</p>
+</div>
+</div>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<ul>
+<li><a href="https://www.researchgate.net/publication/328784715_Street_Network_Studies_from_Networks_to_Models_and_their_Representations">Network models and their representations</a></li>
+<li><a href="https://docs.pgrouting.org/">pgRouting Reference Manual</a></li>
+<li><a href="https://workshop.pgrouting.org/2.8/en/index.html">pgRouting Workshop</a></li>
+<li><a href="https://gis.stackexchange.com/questions/48071/how-does-directed-and-has-reverse-cost-arguments-when-set-to-true-false-and">Understanding Cost Arguments for pgRouting</a></li>
+</ul>
 
 
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<p>This is a Quarto website.</p>
-<p>To learn more about Quarto websites visit <a href="https://quarto.org/docs/websites" class="uri">https://quarto.org/docs/websites</a>.</p>
-
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
