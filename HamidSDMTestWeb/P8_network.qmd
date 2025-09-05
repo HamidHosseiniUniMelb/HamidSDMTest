@@ -263,7 +263,8 @@ SELECT pgr_createTopology('userName.us_interstates', 0.00001, 'geom', 'edge_id')
 ```
 When pgr_createTopology is executed (with OK result), the source and target columns of the edge table are automatically populated with node IDs, and a corresponding vertices table named userName.tableName_vertices_pgr is generated. This vertices table stores the unique nodes of the network and serves as a reference for graph traversal. Once the topology is established, the full suite of pgRouting functions (e.g., pgr_dijkstra for shortest path analysis) can be applied to perform network analysis.
 
-**Notes:**
+Notes:
+
 - The `source` and `target` columns must be of an `integer` data type, as they represent the IDs of the nodes in the network graph.
 - The values of the `source` and `target` columns are automatically populated during topology creation by pgr_createTopology.
 - The `edge_id` column must be of an `integer` data type (e.g., INTEGER, SERIAL), and have a `UNIQUE constraint`, as it serves as the unique identifier of the edges, preventing duplicate records.
