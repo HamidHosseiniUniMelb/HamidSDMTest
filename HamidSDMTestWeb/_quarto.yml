@@ -10,11 +10,11 @@ website:
       - href: about.qmd
         text: Home
       - href: P4_logical.qmd
-        text: Home
+        text: P4_logical
       - href: P6_geometrical.qmd
-        text: Home
+        text: P6_geometrical
       - href: P8_network.qmd
-        text: Home
+        text: P8_network
 
 format:
   html:
