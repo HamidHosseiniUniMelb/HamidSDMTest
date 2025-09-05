@@ -1,7 +1,14 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "P8_network.html",
+    "href": "P8_network.html",
+    "title": "HamidSDMTestWeb",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "P4_logical.html",
+    "href": "P4_logical.html",
     "title": "HamidSDMTestWeb",
     "section": "",
     "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
@@ -12,5 +19,19 @@
     "title": "Abouttttttttttttttttttttttttt",
     "section": "",
     "text": "About this site"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "HamidSDMTestWeb",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "P6_geometrical.html",
+    "href": "P6_geometrical.html",
+    "title": "HamidSDMTestWeb",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
   }
 ]
