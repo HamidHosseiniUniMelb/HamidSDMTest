@@ -730,17 +730,15 @@ Your Turn
 <h3 class="anchored" data-anchor-id="linear-referencing">5.4. Linear Referencing</h3>
 <p>Linear referencing deal with <strong>positioning along linear geometries</strong> (e.g., “where does this point fall along a road/river/rail?”). That is not just a geometric property (like area/perimeter), but a form of spatial analysis specific to linear data.</p>
 <ul>
-<li><code>ST_LineLocatePoint</code> function in PostGIS provides the <strong>fractional location</strong> of a point along a line:</li>
+<li><code>ST_LineLocatePoint</code> function in PostGIS provides the <strong>fractional position</strong> of a point along a line. It returns a <strong>number between 0 and 1</strong> (0 → start of the line, 1 → end of the line, and e.g., 0.25 → the point is 25% along the line from the start):</li>
 </ul>
 <div class="sourceCode" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_LineLocatePoint(line_geom, point_geom)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> line_feature, point_feature</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>It returns a <strong>number between 0 and 1</strong>: 0 → start of the line 1 → end of the line e.g., 0.25 → the point is 25% along the line from the start</p>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="op">..</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li><code>ST_LineInterpolatePoint</code> is a PostGIS function used in geometrical analysis to find an <strong>exact coordinates</strong> of a point along a line at a specified fractional distance:</li>
+<li><code>ST_LineInterpolatePoint</code> is a PostGIS function used in geometrical analysis to find an <strong>exact position</strong> of a point along a line at a specified fractional distance. It returns a <strong>POINT geometry</strong> at the specified fraction along the line:</li>
 </ul>
 <div class="sourceCode" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_LineInterpolatePoint(line_geometry, fraction)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> line_feature</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>It returns a <strong>POINT geometry</strong> at the specified fraction along the line.</p>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="op">..</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -751,7 +749,11 @@ Your Turn
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>1- For route 31 in the table <code>spatial.ptv_bus_routes</code>, what are the linear reference positions of bus stops (<code>spatial.ptv_bus_stops</code>) located within 50 metres of the route? Provide each stop’s fraction along the route and its distance in metres from the start of the route. 2- Using the results from the previous step, write a query to compute the exact coordinates of each bus stop along the route. 3- Visualise the resulting bus stops and their positions along the route in QGIS.</p>
+<ol type="1">
+<li>For route 31 in the table <code>spatial.ptv_bus_routes</code>, what are the linear reference positions of bus stops (<code>spatial.ptv_bus_stops</code>) located within 50 metres of the route? Provide each stop’s fraction along the route and its distance in metres from the start of the route.</li>
+<li>Using the results from the previous step, write a query to compute the exact coordinates of each bus stop along the route.</li>
+<li>Visualise the resulting bus stops and their positions along the route in QGIS.</li>
+</ol>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Answers">
@@ -766,7 +768,9 @@ Answers
 </div>
 <div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>1- Use the following sql:</p>
+<ol type="1">
+<li>Use the following sql:</li>
+</ol>
 <div class="sourceCode" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    r.<span class="kw">id</span> <span class="kw">AS</span> route_id,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    st.<span class="kw">id</span> <span class="kw">AS</span> stop_id,</span>
@@ -781,7 +785,9 @@ Answers
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> ST_DWithin(ST_Transform(st.geom, <span class="dv">7855</span>), </span>
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>                 ST_Transform(r.geom, <span class="dv">7855</span>), <span class="dv">50</span>)  <span class="co">-- only stops within 50 meters of route 68</span></span>
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> stop_position_meters, st.<span class="kw">id</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>2- Use the following sql:</p>
+<ol start="2" type="1">
+<li>Use the following sql:</li>
+</ol>
 <div class="sourceCode" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    r.<span class="kw">id</span> <span class="kw">AS</span> route_id,</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    st.<span class="kw">id</span> <span class="kw">AS</span> stop_id,</span>
