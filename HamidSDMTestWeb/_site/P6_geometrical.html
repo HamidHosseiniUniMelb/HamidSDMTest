@@ -185,6 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#querying-distances" id="toc-querying-distances" class="nav-link" data-scroll-target="#querying-distances">5.1. Querying distances</a></li>
   <li><a href="#buffers-and-centroids" id="toc-buffers-and-centroids" class="nav-link" data-scroll-target="#buffers-and-centroids">5.2. Buffers and centroids</a></li>
   <li><a href="#multi-geometries-geometrycollections-and-accessing-parts-of-geometries" id="toc-multi-geometries-geometrycollections-and-accessing-parts-of-geometries" class="nav-link" data-scroll-target="#multi-geometries-geometrycollections-and-accessing-parts-of-geometries">5.3. Multi* geometries / GeometryCollections and accessing parts of geometries</a></li>
+  <li><a href="#linear-referencing" id="toc-linear-referencing" class="nav-link" data-scroll-target="#linear-referencing">5.4. Linear Referencing</a></li>
   </ul></li>
   <li><a href="#extra-other-ways-of-importing-spatial-data" id="toc-extra-other-ways-of-importing-spatial-data" class="nav-link" data-scroll-target="#extra-other-ways-of-importing-spatial-data">[Extra] Other ways of importing spatial data</a>
   <ul class="collapse">
@@ -725,6 +726,89 @@ Your Turn
 </div>
 </div>
 </section>
+<section id="linear-referencing" class="level3">
+<h3 class="anchored" data-anchor-id="linear-referencing">5.4. Linear Referencing</h3>
+<p>Linear referencing deal with <strong>positioning along linear geometries</strong> (e.g., “where does this point fall along a road/river/rail?”). That is not just a geometric property (like area/perimeter), but a form of spatial analysis specific to linear data.</p>
+<ul>
+<li><code>ST_LineLocatePoint</code> function in PostGIS provides the <strong>fractional location</strong> of a point along a line:</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_LineLocatePoint(line_geom, point_geom)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> line_feature, point_feature</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It returns a <strong>number between 0 and 1</strong>: 0 → start of the line 1 → end of the line e.g., 0.25 → the point is 25% along the line from the start</p>
+<ul>
+<li><code>ST_LineInterpolatePoint</code> is a PostGIS function used in geometrical analysis to find an <strong>exact coordinates</strong> of a point along a line at a specified fractional distance:</li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_LineInterpolatePoint(line_geometry, fraction)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> line_feature</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It returns a <strong>POINT geometry</strong> at the specified fraction along the line.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Your Turn">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Your Turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>1- For route 31 in the table <code>spatial.ptv_bus_routes</code>, what are the linear reference positions of bus stops (<code>spatial.ptv_bus_stops</code>) located within 50 metres of the route? Provide each stop’s fraction along the route and its distance in metres from the start of the route. 2- Using the results from the previous step, write a query to compute the exact coordinates of each bus stop along the route. 3- Visualise the resulting bus stops and their positions along the route in QGIS.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Answers">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>1- Use the following sql:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    r.<span class="kw">id</span> <span class="kw">AS</span> route_id,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    st.<span class="kw">id</span> <span class="kw">AS</span> stop_id,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    ST_LineLocatePoint(ST_LineMerge(ST_Transform(r.geom, <span class="dv">7855</span>)),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                       ST_Transform(st.geom, <span class="dv">7855</span>)) <span class="kw">AS</span> stop_position_fraction,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    ST_LineLocatePoint(ST_LineMerge(ST_Transform(r.geom, <span class="dv">7855</span>)),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                       ST_Transform(st.geom, <span class="dv">7855</span>)) <span class="op">*</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    ST_Length(ST_LineMerge(ST_Transform(r.geom, <span class="dv">7855</span>))) <span class="kw">AS</span> stop_position_meters</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> spatial.ptv_bus_stops st</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> spatial.ptv_bus_routes r</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>   <span class="kw">ON</span> r.<span class="kw">id</span> <span class="op">=</span> <span class="dv">31</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> ST_DWithin(ST_Transform(st.geom, <span class="dv">7855</span>), </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>                 ST_Transform(r.geom, <span class="dv">7855</span>), <span class="dv">50</span>)  <span class="co">-- only stops within 50 meters of route 68</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> stop_position_meters, st.<span class="kw">id</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>2- Use the following sql:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    r.<span class="kw">id</span> <span class="kw">AS</span> route_id,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    st.<span class="kw">id</span> <span class="kw">AS</span> stop_id,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    ST_LineLocatePoint(</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        ST_LineMerge(ST_Transform(r.geom, <span class="dv">7855</span>)),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        ST_Transform(st.geom, <span class="dv">7855</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">AS</span> stop_position_fraction,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    ST_LineInterpolatePoint(</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        ST_LineMerge(ST_Transform(r.geom, <span class="dv">7855</span>)),</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        ST_LineLocatePoint(</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>            ST_LineMerge(ST_Transform(r.geom, <span class="dv">7855</span>)),</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>            ST_Transform(st.geom, <span class="dv">7855</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">AS</span> interpolated_point</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> spatial.ptv_bus_stations st</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> spatial.ptv_bus_routes r</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> r.<span class="kw">id</span> <span class="op">=</span> <span class="dv">31</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> ST_DWithin(</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>        ST_Transform(st.geom, <span class="dv">7855</span>),</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>        ST_Transform(r.geom, <span class="dv">7855</span>),</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>        <span class="dv">50</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> stop_position_fraction, st.<span class="kw">id</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="extra-other-ways-of-importing-spatial-data" class="level2">
 <h2 class="anchored" data-anchor-id="extra-other-ways-of-importing-spatial-data">[Extra] Other ways of importing spatial data</h2>
@@ -733,10 +817,10 @@ Your Turn
 <section id="from-a-join" class="level3">
 <h3 class="anchored" data-anchor-id="from-a-join">From a join</h3>
 <p>Data can be created from a join, based on other tables. Note that below, you could add a functions to the SQL statement <code>geom = t2.geom</code>, e.g., <code>geom = ST(centroid(t2.geom)</code>. What would that do?</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> petrolstation <span class="kw">as</span> t1</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> geom <span class="op">=</span> t2.geom </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> otherschema.pois <span class="kw">as</span> t2</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> t1.attribute1 <span class="op">=</span> t2.attribute2;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> petrolstation <span class="kw">as</span> t1</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> geom <span class="op">=</span> t2.geom </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> otherschema.pois <span class="kw">as</span> t2</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> t1.attribute1 <span class="op">=</span> t2.attribute2;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="from-a-tool" class="level3">
 <h3 class="anchored" data-anchor-id="from-a-tool">From a tool</h3>

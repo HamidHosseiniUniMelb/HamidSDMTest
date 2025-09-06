@@ -345,31 +345,24 @@ You can explore the part of PostGIS documentation related to GeometryCollections
 ### 5.4. Linear Referencing
 Linear referencing deal with **positioning along linear geometries** (e.g., "where does this point fall along a road/river/rail?"). That is not just a geometric property (like area/perimeter), but a form of spatial analysis specific to linear data.
 
-- `ST_LineLocatePoint` function in PostGIS provides the **fractional location** of a point along a line: 
+- `ST_LineLocatePoint` function in PostGIS provides the **fractional position** of a point along a line. It returns a **number between 0 and 1** (0 → start of the line, 1 → end of the line, and e.g., 0.25 → the point is 25% along the line from the start): 
 ```sql
 SELECT ST_LineLocatePoint(line_geom, point_geom)
-FROM line_feature, point_feature
+FROM ...
 ```
-It returns a **number between 0 and 1**:
-0 → start of the line
-1 → end of the line
-e.g., 0.25 → the point is 25% along the line from the start
-
-- `ST_LineInterpolatePoint` is a PostGIS function used in geometrical analysis to find an **exact coordinates** of a point along a line at a specified fractional distance:
+- `ST_LineInterpolatePoint` is a PostGIS function used in geometrical analysis to find an **exact position** of a point along a line at a specified fractional distance. It returns a **POINT geometry** at the specified fraction along the line:
 ```sql
 SELECT ST_LineInterpolatePoint(line_geometry, fraction)
-FROM line_feature
+FROM ...
 ```
-It returns a **POINT geometry** at the specified fraction along the line.
-
 ::: {.callout-tip title="Your Turn"}
-1- For route 31 in the table `spatial.ptv_bus_routes`, what are the linear reference positions of bus stops (`spatial.ptv_bus_stops`) located within 50 metres of the route? Provide each stop’s fraction along the route and its distance in metres from the start of the route.
-2- Using the results from the previous step, write a query to compute the exact coordinates of each bus stop along the route.
-3- Visualise the resulting bus stops and their positions along the route in QGIS.
+1. For route 31 in the table `spatial.ptv_bus_routes`, what are the linear reference positions of bus stops (`spatial.ptv_bus_stops`) located within 50 metres of the route? Provide each stop’s fraction along the route and its distance in metres from the start of the route.
+2. Using the results from the previous step, write a query to compute the exact coordinates of each bus stop along the route.
+3. Visualise the resulting bus stops and their positions along the route in QGIS.
 :::
 
 ::: {.callout-caution title="Answers" collapse="true"}
-1- Use the following sql:
+1. Use the following sql:
 ```sql
 SELECT 
     r.id AS route_id,
@@ -386,7 +379,7 @@ WHERE ST_DWithin(ST_Transform(st.geom, 7855),
                  ST_Transform(r.geom, 7855), 50)  -- only stops within 50 meters of route 68
 ORDER BY stop_position_meters, st.id;
 ```
-2- Use the following sql: 
+2. Use the following sql: 
 ```sql
 SELECT
     r.id AS route_id,
