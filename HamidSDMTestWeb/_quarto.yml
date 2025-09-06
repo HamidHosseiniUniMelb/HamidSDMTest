@@ -8,7 +8,7 @@ website:
       - href: index.qmd
         text: Home
       - href: about.qmd
-        text: Home
+        text: Test
       - href: P4_logical.qmd
         text: P4_logical
       - href: P6_geometrical.qmd
