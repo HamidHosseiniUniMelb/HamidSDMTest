@@ -342,6 +342,80 @@ You can explore the part of PostGIS documentation related to GeometryCollections
 2. According to the data in the `world_countries` table, how many islands (individual polygons) is Australia made up of? Use `ST_Dump` in your SQL query to answer this question.
 :::
 
+### 5.4. Linear Referencing
+Linear referencing deal with **positioning along linear geometries** (e.g., "where does this point fall along a road/river/rail?"). That is not just a geometric property (like area/perimeter), but a form of spatial analysis specific to linear data.
+
+- `ST_LineLocatePoint` function in PostGIS provides the **fractional location** of a point along a line: 
+```sql
+SELECT ST_LineLocatePoint(line_geom, point_geom)
+FROM line_feature, point_feature
+```
+It returns a **number between 0 and 1**:
+0 → start of the line
+1 → end of the line
+e.g., 0.25 → the point is 25% along the line from the start
+
+- `ST_LineInterpolatePoint` is a PostGIS function used in geometrical analysis to find an **exact coordinates** of a point along a line at a specified fractional distance:
+```sql
+SELECT ST_LineInterpolatePoint(line_geometry, fraction)
+FROM line_feature
+```
+It returns a **POINT geometry** at the specified fraction along the line.
+
+::: {.callout-tip title="Your Turn"}
+1- For route 31 in the table `spatial.ptv_bus_routes`, what are the linear reference positions of bus stops (`spatial.ptv_bus_stops`) located within 50 metres of the route? Provide each stop’s fraction along the route and its distance in metres from the start of the route.
+2- Using the results from the previous step, write a query to compute the exact coordinates of each bus stop along the route.
+3- Visualise the resulting bus stops and their positions along the route in QGIS.
+:::
+
+::: {.callout-caution title="Answers" collapse="true"}
+1- Use the following sql:
+```sql
+SELECT 
+    r.id AS route_id,
+    st.id AS stop_id,
+    ST_LineLocatePoint(ST_LineMerge(ST_Transform(r.geom, 7855)),
+                       ST_Transform(st.geom, 7855)) AS stop_position_fraction,
+    ST_LineLocatePoint(ST_LineMerge(ST_Transform(r.geom, 7855)),
+                       ST_Transform(st.geom, 7855)) *
+    ST_Length(ST_LineMerge(ST_Transform(r.geom, 7855))) AS stop_position_meters
+FROM spatial.ptv_bus_stops st
+JOIN spatial.ptv_bus_routes r
+   ON r.id = 31
+WHERE ST_DWithin(ST_Transform(st.geom, 7855), 
+                 ST_Transform(r.geom, 7855), 50)  -- only stops within 50 meters of route 68
+ORDER BY stop_position_meters, st.id;
+```
+2- Use the following sql: 
+```sql
+SELECT
+    r.id AS route_id,
+    st.id AS stop_id,
+    ST_LineLocatePoint(
+        ST_LineMerge(ST_Transform(r.geom, 7855)),
+        ST_Transform(st.geom, 7855)
+    ) AS stop_position_fraction,
+    ST_LineInterpolatePoint(
+        ST_LineMerge(ST_Transform(r.geom, 7855)),
+        ST_LineLocatePoint(
+            ST_LineMerge(ST_Transform(r.geom, 7855)),
+            ST_Transform(st.geom, 7855)
+        )
+    ) AS interpolated_point
+FROM spatial.ptv_bus_stations st
+JOIN spatial.ptv_bus_routes r
+    ON r.id = 31
+WHERE ST_DWithin(
+        ST_Transform(st.geom, 7855),
+        ST_Transform(r.geom, 7855),
+        50
+    )
+ORDER BY stop_position_fraction, st.id;
+```
+:::
+
+
+
 ## [Extra] Other ways of importing spatial data
 
 Other than creating data by hand, there are other means of creating content. This may be by modifying/computing geometrical content based on the existing content of other tables (or even the same one), parsing content from textual sources (importing text with coordinates and parsing this into e.g., points through the same processes investigated above), or importing content from GIS tools, or through ETL (Extract-Transform-Load) processes.

@@ -578,7 +578,14 @@ pgr_createTopology
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Run topology function</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> pgr_createTopology(<span class="st">'userName.us_interstates'</span>, <span class="fl">0.00001</span>, <span class="st">'geom'</span>, <span class="st">'edge_id'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>When pgr_createTopology is executed (with OK result), the source and target columns of the edge table are automatically populated with node IDs, and a corresponding vertices table named userName.tableName_vertices_pgr is generated. This vertices table stores the unique nodes of the network and serves as a reference for graph traversal. Once the topology is established, the full suite of pgRouting functions (e.g., pgr_dijkstra for shortest path analysis) can be applied to perform network analysis.</p>
-<p><strong>Notes:</strong> - The <code>source</code> and <code>target</code> columns must be of an <code>integer</code> data type, as they represent the IDs of the nodes in the network graph. - The values of the <code>source</code> and <code>target</code> columns are automatically populated during topology creation by pgr_createTopology. - The <code>edge_id</code> column must be of an <code>integer</code> data type (e.g., INTEGER, SERIAL), and have a <code>UNIQUE constraint</code>, as it serves as the unique identifier of the edges, preventing duplicate records. - Unlike <code>source</code> and <code>target</code>, the values of the <code>edge_id</code> column are not generated automatically during topology creation and must exist beforehand. Therefore, defining it as a <code>SERIAL</code> (auto-incrementing integer) is strongly recommended. - Snapping tolerance is the distance threshold used when creating a topology to decide whether two vertices (line endpoints) should be treated as the same node.</p>
+<p>Notes:</p>
+<ul>
+<li>The <code>source</code> and <code>target</code> columns must be of an <code>integer</code> data type, as they represent the IDs of the nodes in the network graph.</li>
+<li>The values of the <code>source</code> and <code>target</code> columns are automatically populated during topology creation by pgr_createTopology.</li>
+<li>The <code>edge_id</code> column must be of an <code>integer</code> data type (e.g., INTEGER, SERIAL), and have a <code>UNIQUE constraint</code>, as it serves as the unique identifier of the edges, preventing duplicate records.</li>
+<li>Unlike <code>source</code> and <code>target</code>, the values of the <code>edge_id</code> column are not generated automatically during topology creation and must exist beforehand. Therefore, defining it as a <code>SERIAL</code> (auto-incrementing integer) is strongly recommended.</li>
+<li>Snapping tolerance is the distance threshold used when creating a topology to decide whether two vertices (line endpoints) should be treated as the same node.</li>
+</ul>
 </div>
 </div>
 </section>
