@@ -336,8 +336,8 @@ After these updates, the edge table contains all the information required for ne
 :::
 
 ::: {.callout-caution title="Answers" collapse="true"}
-2- Vertex 2487 has 4 outgoing edges and 3 incoming edges. 
-4- Use the following sql:
+2. Vertex 2487 has **4** outgoing edges and **3** incoming edges. 
+4. Use the following sql:
 ```sql
 SELECT * FROM pgr_dijkstra(
   'SELECT id, source, target, cost, reverse_cost FROM my_network_topology',
