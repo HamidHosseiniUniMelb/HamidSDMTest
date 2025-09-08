@@ -230,7 +230,7 @@ Have a look at the structure of these tables, and load the data into QGIS to vie
 **Note** on `pgr_createTopology`: You may notice in some documentation there is a function `pgr_createTopology` that is often used on a raw network to find intersections between edges and build the network topology from those intersections. You can experiment with it to create a topology of any network you import. It creates the edge table for you. See the scripts attached to this practical, above.
 
 ::: {.callout-note}
-# pgr_createTopology and pgr_extractVertices
+# pgr_createTopology
 “pgr_createTopology” is a pgRouting function that prepares a network dataset for routing by building a topology (nodes and edges) from a set of geometries (linear features like roads, railways, etc.). The signature of the function is as follows:
 
 ```sql
@@ -270,13 +270,17 @@ Notes:
 - The `edge_id` column must be of an `integer` data type (e.g., INTEGER, SERIAL), and have a `UNIQUE constraint`, as it serves as the unique identifier of the edges, preventing duplicate records.
 - Unlike `source` and `target`, the values of the `edge_id` column are not generated automatically during topology creation and must exist beforehand. Therefore, defining it as a `SERIAL` (auto-incrementing integer) is strongly recommended.
 - Snapping tolerance is the distance threshold used when creating a topology to decide whether two vertices (line endpoints) should be treated as the same node.
+:::
 
-However, in newer versions of pgRouting, the pgr_createTopology function is deprecated in favor of functions like `pgr_extractVertices`. The `pgr_extractVertices` automatically:
+::: {.callout-note}
+# pgr_extractVertices
+However, in newer versions of pgRouting, the `pgr_createTopology` function is deprecated in favor of functions like `pgr_extractVertices`. The `pgr_extractVertices` automatically:
 
  - Creates a vertices table with unique vertex IDs.
  - Computes in_edges and out_edges for each vertex.
  - Detects connectivity between edges based on geometry endpoints.
  
+You can generate a vertices table using the following sql:
  ```sql
 SELECT *
 INTO vertices_table
@@ -284,7 +288,7 @@ FROM pgr_extractVertices(
     'SELECT id, geom FROM your_edge_table ORDER BY id');
  ```
 
-Using vertices_table, now you can enrich the edge table by adding source (id ,x1,y1), target(id x2,y2), cost, reverse_cost and build the topology table for your network as follows:
+Once the vertices table is created, the edge table can be enriched to include essential topology information. This involves adding columns for source and target nodes, their coordinates, and traversal costs:
 
 ```sql
 ALTER TABLE your_edge_table
@@ -297,6 +301,7 @@ ALTER TABLE your_edge_table
   ADD COLUMN IF NOT EXISTS cost double precision, -- Add 'cost' column
   ADD COLUMN IF NOT EXISTS reverse_cost double precision; -- Add 'reverse_cost' column
 
+-- Populate the source and target columns using the outgoing and incoming edges from the vertices table:
 -- update 'source', 'x1, 'y1' using outgoing edges from vertices_table
 WITH out_going AS (
   SELECT id AS vid, unnest(out_edges) AS eid, x, y
@@ -320,7 +325,7 @@ UPDATE your_edge_table
 SET cost = ST_Length(geom),
     reverse_cost = ST_Length(geom);
 ```
-Once the columns updated, the full suite of pgRouting functions (e.g., pgr_dijkstra for shortest path analysis) can be applied to perform network analysis.
+After these updates, the edge table contains all the information required for network analysis. You can now apply pgRouting functions, such as `pgr_dijkstra`, to compute shortest paths, network connectivity, and other routing analyses efficiently.
 :::
 
 ::: {.callout-tip title="Your Turn"}
@@ -331,8 +336,8 @@ Once the columns updated, the full suite of pgRouting functions (e.g., pgr_dijks
 :::
 
 ::: {.callout-caution title="Answers" collapse="true"}
-2. 4 outgoings and 3 incomings.
-4. Use the following sql:
+2- Vertex 2487 has 4 outgoing edges and 3 incoming edges. 
+4- Use the following sql:
 ```sql
 SELECT * FROM pgr_dijkstra(
   'SELECT id, source, target, cost, reverse_cost FROM my_network_topology',
