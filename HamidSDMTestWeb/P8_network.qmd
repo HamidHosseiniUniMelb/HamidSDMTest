@@ -281,16 +281,17 @@ However, in newer versions of pgRouting, the `pgr_createTopology` function is de
  - Detects connectivity between edges based on geometry endpoints.
  
 You can generate a vertices table using the following sql:
- ```sql
+```sql
 SELECT *
 INTO vertices_table
 FROM pgr_extractVertices(
     'SELECT id, geom FROM your_edge_table ORDER BY id');
- ```
+```
 
 Once the vertices table is created, the edge table can be enriched to include essential topology information. This involves adding columns for source and target nodes, their coordinates, and traversal costs:
 
 ```sql
+-- Add the source, target, x1, y1, x2, y2, and cost columns to your_edge_table 
 ALTER TABLE your_edge_table
   ADD COLUMN IF NOT EXISTS source bigint, -- Add 'source' column; integer type
   ADD COLUMN IF NOT EXISTS target bigint, -- Add 'target' column; integer type
@@ -301,8 +302,7 @@ ALTER TABLE your_edge_table
   ADD COLUMN IF NOT EXISTS cost double precision, -- Add 'cost' column
   ADD COLUMN IF NOT EXISTS reverse_cost double precision; -- Add 'reverse_cost' column
 
--- Populate the source and target columns using the outgoing and incoming edges from the vertices table:
--- update 'source', 'x1, 'y1' using outgoing edges from vertices_table
+-- Populate the columns using the outgoing and incoming edges from the vertices table:
 WITH out_going AS (
   SELECT id AS vid, unnest(out_edges) AS eid, x, y
   FROM vertices_table
@@ -311,7 +311,7 @@ UPDATE your_edge_table
 SET source = out_going.vid, x1 = out_going.x, y1 = out_going.y
 FROM out_going
 WHERE your_edge_table.id = out_going.eid;
--- -- update 'target', 'x2, 'y2' using incoming edges from vertices_table
+
 WITH in_coming AS (
   SELECT id AS vid, unnest(in_edges) AS eid, x, y
   FROM vertices_table
@@ -320,7 +320,7 @@ UPDATE your_edge_table
 SET target = in_coming.vid, x2 = in_coming.x, y2 = in_coming.y
 FROM in_coming
 WHERE your_edge_table.id = in_coming.eid;
--- update 'cost' 
+
 UPDATE your_edge_table
 SET cost = ST_Length(geom),
     reverse_cost = ST_Length(geom);
