@@ -672,7 +672,10 @@ Answers
 </div>
 <div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>2- Vertex 2487 has 4 outgoing edges and 3 incoming edges. 4- Use the following sql:</p>
+<ol start="2" type="1">
+<li>Vertex 2487 has <strong>4</strong> outgoing edges and <strong>3</strong> incoming edges.</li>
+<li>Use the following sql:</li>
+</ol>
 <div class="sourceCode" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> pgr_dijkstra(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'SELECT id, source, target, cost, reverse_cost FROM my_network_topology'</span>,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">6231</span>, <span class="dv">7178</span>,</span>
