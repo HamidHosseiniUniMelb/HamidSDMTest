@@ -230,7 +230,7 @@ Have a look at the structure of these tables, and load the data into QGIS to vie
 **Note** on `pgr_createTopology`: You may notice in some documentation there is a function `pgr_createTopology` that is often used on a raw network to find intersections between edges and build the network topology from those intersections. You can experiment with it to create a topology of any network you import. It creates the edge table for you. See the scripts attached to this practical, above.
 
 ::: {.callout-note}
-# pgr_createTopology
+# pgr_createTopology and pgr_extractVertices
 “pgr_createTopology” is a pgRouting function that prepares a network dataset for routing by building a topology (nodes and edges) from a set of geometries (linear features like roads, railways, etc.). The signature of the function is as follows:
 
 ```sql
@@ -271,6 +271,75 @@ Notes:
 - Unlike `source` and `target`, the values of the `edge_id` column are not generated automatically during topology creation and must exist beforehand. Therefore, defining it as a `SERIAL` (auto-incrementing integer) is strongly recommended.
 - Snapping tolerance is the distance threshold used when creating a topology to decide whether two vertices (line endpoints) should be treated as the same node.
 
+However, in newer versions of pgRouting, the pgr_createTopology function is deprecated in favor of functions like `pgr_extractVertices`. The `pgr_extractVertices` automatically:
+
+ - Creates a vertices table with unique vertex IDs.
+ - Computes in_edges and out_edges for each vertex.
+ - Detects connectivity between edges based on geometry endpoints.
+ 
+ ```sql
+SELECT *
+INTO vertices_table
+FROM pgr_extractVertices(
+    'SELECT id, geom FROM your_edge_table ORDER BY id');
+ ```
+
+Using vertices_table, now you can enrich the edge table by adding source (id ,x1,y1), target(id x2,y2), cost, reverse_cost and build the topology table for your network as follows:
+
+```sql
+ALTER TABLE your_edge_table
+  ADD COLUMN IF NOT EXISTS source bigint, -- Add 'source' column; integer type
+  ADD COLUMN IF NOT EXISTS target bigint, -- Add 'target' column; integer type
+  ADD COLUMN IF NOT EXISTS x1 double precision, -- Add 'x1' column
+  ADD COLUMN IF NOT EXISTS y1 double precision, -- Add 'y1' column
+  ADD COLUMN IF NOT EXISTS x2 double precision, -- Add 'x2' column
+  ADD COLUMN IF NOT EXISTS y2 double precision; -- Add 'y2' column
+  ADD COLUMN IF NOT EXISTS cost double precision, -- Add 'cost' column
+  ADD COLUMN IF NOT EXISTS reverse_cost double precision; -- Add 'reverse_cost' column
+
+-- update 'source', 'x1, 'y1' using outgoing edges from vertices_table
+WITH out_going AS (
+  SELECT id AS vid, unnest(out_edges) AS eid, x, y
+  FROM vertices_table
+)
+UPDATE your_edge_table
+SET source = out_going.vid, x1 = out_going.x, y1 = out_going.y
+FROM out_going
+WHERE your_edge_table.id = out_going.eid;
+-- -- update 'target', 'x2, 'y2' using incoming edges from vertices_table
+WITH in_coming AS (
+  SELECT id AS vid, unnest(in_edges) AS eid, x, y
+  FROM vertices_table
+)
+UPDATE your_edge_table
+SET target = in_coming.vid, x2 = in_coming.x, y2 = in_coming.y
+FROM in_coming
+WHERE your_edge_table.id = in_coming.eid;
+-- update 'cost' 
+UPDATE your_edge_table
+SET cost = ST_Length(geom),
+    reverse_cost = ST_Length(geom);
+```
+Once the columns updated, the full suite of pgRouting functions (e.g., pgr_dijkstra for shortest path analysis) can be applied to perform network analysis.
+:::
+
+::: {.callout-tip title="Your Turn"}
+1. Create a network topology table from OSM road data of Melbourne (`spatial.melbourne_osm_roads`), using the `pgr_extractVertices` function.
+2. Focus on the vertex with ID 2487. Determine how many roads (edges) are outgoing (out_edges) from this node and how many are incoming (in_edges).
+3. Load the network and vertex tables into QGIS. Highlight vertex 2487 and visually inspect its connections.
+4. Find the shortest path from Flinders Street (vertex ID 6231) to Hampton Beach (vertex ID 7178) in the network.
+:::
+
+::: {.callout-caution title="Answers" collapse="true"}
+2. 4 outgoings and 3 incomings.
+4. Use the following sql:
+```sql
+SELECT * FROM pgr_dijkstra(
+  'SELECT id, source, target, cost, reverse_cost FROM my_network_topology',
+  6231, 7178,
+  directed := true
+);
+```
 :::
 
 ## Resources
