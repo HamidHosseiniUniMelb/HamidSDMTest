@@ -166,7 +166,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-simple-scenario" id="toc-the-simple-scenario" class="nav-link" data-scroll-target="#the-simple-scenario">1. The simple scenario</a></li>
   <li><a href="#the-project" id="toc-the-project" class="nav-link" data-scroll-target="#the-project">2. The project</a></li>
   <li><a href="#duckdb" id="toc-duckdb" class="nav-link" data-scroll-target="#duckdb">3. DuckDB</a></li>
+  <li><a href="#duckdb-with-python" id="toc-duckdb-with-python" class="nav-link" data-scroll-target="#duckdb-with-python">4. DuckDB with Python</a></li>
   </ul></li>
+  <li><a href="#connect-to-an-in-memory-database" id="toc-connect-to-an-in-memory-database" class="nav-link" data-scroll-target="#connect-to-an-in-memory-database">Connect to an in-memory database</a></li>
+  <li><a href="#or-connect-to-a-persistent-file-based-database" id="toc-or-connect-to-a-persistent-file-based-database" class="nav-link" data-scroll-target="#or-connect-to-a-persistent-file-based-database">Or, connect to a persistent file-based database</a></li>
+  <li><a href="#con-duckdb.connectdatabasemy_database.duckdb-read_onlyfalse" id="toc-con-duckdb.connectdatabasemy_database.duckdb-read_onlyfalse" class="nav-link" data-scroll-target="#con-duckdb.connectdatabasemy_database.duckdb-read_onlyfalse">con = duckdb.connect(database=‘my_database.duckdb’, read_only=False)</a></li>
+  <li><a href="#example-create-a-simple-table-and-query-it" id="toc-example-create-a-simple-table-and-query-it" class="nav-link" data-scroll-target="#example-create-a-simple-table-and-query-it">Example: create a simple table and query it</a></li>
+  <li><a href="#fetch-the-result-as-a-pandas-dataframe" id="toc-fetch-the-result-as-a-pandas-dataframe" class="nav-link" data-scroll-target="#fetch-the-result-as-a-pandas-dataframe">Fetch the result as a Pandas DataFrame</a></li>
+  <li><a href="#display-the-dataframe" id="toc-display-the-dataframe" class="nav-link" data-scroll-target="#display-the-dataframe">Display the DataFrame</a></li>
   </ul>
 </nav>
     </div>
@@ -346,12 +353,37 @@ Your Turn
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- Query the table</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>– 1. Create a sample table CREATE TABLE employees ( id INTEGER, name TEXT, department TEXT );</p>
-<p>– 2. Insert some sample data INSERT INTO employees VALUES (1, ‘Hamid’, ‘Surveying’), (2, ‘Sara’, ‘Planning’), (3, ‘Ali’, ‘GIS’);</p>
-<p>– 3. Query the table SELECT * FROM employees;</p>
-
-
 </section>
+<section id="duckdb-with-python" class="level2">
+<h2 class="anchored" data-anchor-id="duckdb-with-python">4. DuckDB with Python</h2>
+<p>You can run Python code to interact with DuckDB directly.<br>
+The following example creates a simple table, inserts data, and queries it.</p>
+<p>import duckdb import pandas as pd</p>
+</section>
+</section>
+<section id="connect-to-an-in-memory-database" class="level1">
+<h1>Connect to an in-memory database</h1>
+<p>con = duckdb.connect(database=‘:memory:’, read_only=False)</p>
+</section>
+<section id="or-connect-to-a-persistent-file-based-database" class="level1">
+<h1>Or, connect to a persistent file-based database</h1>
+</section>
+<section id="con-duckdb.connectdatabasemy_database.duckdb-read_onlyfalse" class="level1">
+<h1>con = duckdb.connect(database=‘my_database.duckdb’, read_only=False)</h1>
+</section>
+<section id="example-create-a-simple-table-and-query-it" class="level1">
+<h1>Example: create a simple table and query it</h1>
+<p>con.execute(“CREATE TABLE people (name VARCHAR, age INTEGER)”) con.execute(“INSERT INTO people VALUES (‘Hamid’, 32), (‘Sara’, 29)”)</p>
+</section>
+<section id="fetch-the-result-as-a-pandas-dataframe" class="level1">
+<h1>Fetch the result as a Pandas DataFrame</h1>
+<p>df = con.execute(“SELECT * FROM people”).fetchdf()</p>
+</section>
+<section id="display-the-dataframe" class="level1">
+<h1>Display the DataFrame</h1>
+<p>print(df)</p>
+
+
 </section>
 
 </main> <!-- /main -->
