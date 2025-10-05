@@ -160,35 +160,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#from-conceptual-to-logical-design" id="toc-from-conceptual-to-logical-design" class="nav-link active" data-scroll-target="#from-conceptual-to-logical-design">From conceptual to logical design</a></li>
+  <li><a href="#p4-logical-design" id="toc-p4-logical-design" class="nav-link active" data-scroll-target="#p4-logical-design">[P4] Logical design</a>
+  <ul class="collapse">
+  <li><a href="#from-conceptual-to-logical-design" id="toc-from-conceptual-to-logical-design" class="nav-link" data-scroll-target="#from-conceptual-to-logical-design">From conceptual to logical design</a></li>
   <li><a href="#the-simple-scenario" id="toc-the-simple-scenario" class="nav-link" data-scroll-target="#the-simple-scenario">1. The simple scenario</a></li>
   <li><a href="#the-project" id="toc-the-project" class="nav-link" data-scroll-target="#the-project">2. The project</a></li>
   <li><a href="#duckdb" id="toc-duckdb" class="nav-link" data-scroll-target="#duckdb">3. DuckDB</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">[P4] Logical design</h1>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
+<section id="p4-logical-design" class="level1">
+<h1>[P4] Logical design</h1>
 <p>In last week’s practical class, you conducted requirements analysis and conceptual design for a simple company scenario. Now you can progress to a refinement.</p>
 <p>In the logical step, you explicitly consider the target type of DBMS (database management system) – in this case, a relational DBMS. You model your data storage structures (relation schemas) in a manner that supports all the requirements for data integrity maintenance.</p>
 <section id="from-conceptual-to-logical-design" class="level2">
@@ -347,10 +336,19 @@ Your Turn
 </section>
 <section id="duckdb" class="level2">
 <h2 class="anchored" data-anchor-id="duckdb">3. DuckDB</h2>
-<p>```{sql connection=duckdb} – Create a sample table CREATE TABLE employees (id INTEGER, name TEXT, department TEXT); INSERT INTO employees VALUES (1, ‘Hamid’, ‘Surveying’), (2, ‘Sara’, ‘Planning’), (3, ‘Ali’, ‘GIS’);</p>
-<p>– Query the table SELECT * FROM employees; ```</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- Create a sample table</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> employees (<span class="kw">id</span> <span class="dt">INTEGER</span>, name TEXT, department TEXT);</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> employees <span class="kw">VALUES</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">1</span>, <span class="st">'Hamid'</span>, <span class="st">'Surveying'</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">2</span>, <span class="st">'Sara'</span>, <span class="st">'Planning'</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">3</span>, <span class="st">'Ali'</span>, <span class="st">'GIS'</span>);</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- Query the table</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
