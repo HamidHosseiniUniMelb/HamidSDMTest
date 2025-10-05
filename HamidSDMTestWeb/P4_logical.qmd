@@ -154,19 +154,28 @@ SELECT * FROM employees;
 
 
 
-```{sql connection=duckdb}
--- 1. Create a sample table
-CREATE TABLE employees (
-    id INTEGER,
-    name TEXT,
-    department TEXT
-);
 
--- 2. Insert some sample data
-INSERT INTO employees VALUES 
-    (1, 'Hamid', 'Surveying'),
-    (2, 'Sara', 'Planning'),
-    (3, 'Ali', 'GIS');
+## 4. DuckDB with Python
 
--- 3. Query the table
-SELECT * FROM employees;
+You can run Python code to interact with DuckDB directly.  
+The following example creates a simple table, inserts data, and queries it.
+
+```{python}
+import duckdb
+import pandas as pd
+
+# Connect to an in-memory database
+con = duckdb.connect(database=':memory:', read_only=False)
+
+# Or, connect to a persistent file-based database
+# con = duckdb.connect(database='my_database.duckdb', read_only=False)
+
+# Example: create a simple table and query it
+con.execute("CREATE TABLE people (name VARCHAR, age INTEGER)")
+con.execute("INSERT INTO people VALUES ('Hamid', 32), ('Sara', 29)")
+
+# Fetch the result as a Pandas DataFrame
+df = con.execute("SELECT * FROM people").fetchdf()
+
+# Display the DataFrame
+print(df)

@@ -28,3 +28,4 @@ execute:
   echo: true        # Show code in the output
   warning: true     # Show warnings (optional)
   error: true       # Show errors (optional)
+  engine: python
