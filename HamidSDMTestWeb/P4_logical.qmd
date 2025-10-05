@@ -138,7 +138,8 @@ For the rest of the session, continue working on your group's conceptual model f
 
 ## 3. DuckDB
 
-```{sql connection=duckdb}
+```sql
+
 -- Create a sample table
 CREATE TABLE employees (id INTEGER, name TEXT, department TEXT);
 INSERT INTO employees VALUES 
@@ -148,4 +149,5 @@ INSERT INTO employees VALUES
 
 -- Query the table
 SELECT * FROM employees;
+
 ```
