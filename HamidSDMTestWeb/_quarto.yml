@@ -24,5 +24,7 @@ format:
     css: styles.css
     toc: true
 
-
-
+execute:
+  echo: true        # Show code in the output
+  warning: true     # Show warnings (optional)
+  error: true       # Show errors (optional)
