@@ -134,3 +134,18 @@ For the expression of the model, you can use any drawing technique you wish:
 You are expected to present a logical design as part of Assignment 2. It will help you to think of other aspects of the project (look at all the project specification as well Assignments 4 and 5) as some aspects of the logical design would benefit from knowledge/anticipation of subsequent steps.
 
 For the rest of the session, continue working on your group's conceptual model for Assignment 2. Begin the logical model when you think you have completed your conceptual model.
+
+
+## 3. DuckDB
+
+```{sql connection=duckdb}
+-- Create a sample table
+CREATE TABLE employees (id INTEGER, name TEXT, department TEXT);
+INSERT INTO employees VALUES 
+  (1, 'Hamid', 'Surveying'),
+  (2, 'Sara', 'Planning'),
+  (3, 'Ali', 'GIS');
+
+-- Query the table
+SELECT * FROM employees;
+```
