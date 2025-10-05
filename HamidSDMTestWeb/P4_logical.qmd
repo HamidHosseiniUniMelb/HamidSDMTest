@@ -151,3 +151,21 @@ INSERT INTO employees VALUES
 SELECT * FROM employees;
 
 ```
+
+
+```{sql connection=duckdb}
+-- Create a sample table
+CREATE TABLE employees (
+    id INTEGER,
+    name TEXT,
+    department TEXT
+);
+
+-- Insert some sample data
+INSERT INTO employees VALUES 
+    (1, 'Hamid', 'Surveying'),
+    (2, 'Sara', 'Planning'),
+    (3, 'Ali', 'GIS');
+
+-- Query the table
+SELECT * FROM employees;
