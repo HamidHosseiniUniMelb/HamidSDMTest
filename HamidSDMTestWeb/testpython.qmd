@@ -1,0 +1,30 @@
+---
+title: "matplotlib demo"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
+```{pyodide}
+for x in range(5):
+  print(x ** 2)
+```
+
+```{pyodide}
+import micropip as mp
+await mp.install("pandas")
+await mp.install("https://duckdb.github.io/duckdb-pyodide/wheels/duckdb-1.2.0-cp311-cp311-emscripten_3_1_46_wasm32.whl")
+import pandas as pd
+import duckdb
+
+
+df = pd.DataFrame({'x': [1, 2, 3]})
+result = duckdb.query("SELECT x, x*2 AS double FROM df").to_df()
+print(result)
+con = duckdb.connect("mydata11.duckdb")  # creates or opens a DuckDB file
+con.execute("CREATE TABLE mytable AS SELECT * FROM df")
+import os
+print(os.getcwd())
+con = duckdb.connect("mydata11.duckdb")  # creates or opens a DuckDB file
+```
